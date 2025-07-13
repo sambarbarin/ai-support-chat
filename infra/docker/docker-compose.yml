@@ -1,0 +1,29 @@
+# infra/docker/docker-compose.yml
+
+services:
+  frontend:
+    build:
+      context: ../../apps/frontend
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api-gateway
+      - llm-service
+    environment:
+      - REACT_APP_API_URL=http://api-gateway:3001
+
+  api-gateway:
+    build:
+      context: ../../apps/api-gateway
+    ports:
+      - '3001:3001'
+    depends_on:
+      - llm-service
+
+  llm-service:
+    build:
+      context: ../../apps/llm-service
+    ports:
+      - '8000:8000'
+    env_file:
+      - ../../.env
