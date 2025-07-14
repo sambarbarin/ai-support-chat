@@ -53,7 +53,7 @@ export default function Chat() {
       <div className="model-info">
         <CurvedLoop 
           marqueeText="  ✦  AI Support Chat  ✦  "
-          speed={1}
+          speed={0.5}
           curveAmount={-10}
           interactive={false}
           className="custom-text-style"
