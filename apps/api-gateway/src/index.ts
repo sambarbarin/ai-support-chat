@@ -21,14 +21,7 @@ app.post('/chat', async (req, res) => {
       return res.status(400).json({ error: 'messages must be an array' });
     }
 
-    let prompt = '';
-    for (const m of messages) {
-      if (m.role === 'user') prompt += `Moi: ${m.content}\n`;
-      else if (m.role === 'assistant') prompt += `Bot: ${m.content}\n`;
-    }
-    prompt += 'Bot: ';
-
-    const response = await axios.post('http://llm-service:8000/generate', { prompt });
+    const response = await axios.post('http://llm-service:8000/generate', { messages });
 
     if (response.data && response.data.reply) {
       const cleaned = cleanResponse(response.data.reply);

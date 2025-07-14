@@ -1,11 +1,12 @@
 .chat-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 90vh;
   max-width: 700px;
   margin: auto;
   padding: 1rem;
   font-family: Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 .chat-box {
@@ -23,18 +24,19 @@
   border-radius: 8px;
   max-width: 80%;
   white-space: pre-wrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
 .chat-message.user {
   align-self: flex-end;
-  background-color: #d1e7dd;
-  color: #0f5132;
+  background-color: #007bff;
+  color: white;
 }
 
 .chat-message.bot {
   align-self: flex-start;
-  background-color: #e2e3e5;
-  color: #41464b;
+  background-color: #f1f1f1;
+  color: #333;
 }
 
 .markdown h1, .markdown h2, .markdown h3 {
@@ -65,4 +67,9 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.chat-input button:hover {
+  background-color: #0056b3;
 }

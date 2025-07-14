@@ -1,5 +1,6 @@
 // frontend/src/components/Chat.tsx
 import React, { useState } from 'react';
+import '../assets/chat-message.css';
 
 type Message = {
   role: 'user' | 'assistant';
@@ -40,41 +41,30 @@ export default function Chat() {
   }
 
   return (
-    <div style={{ maxWidth: 600, margin: 'auto', fontFamily: 'Arial, sans-serif' }}>
-      <div
-        style={{
-          minHeight: 300,
-          border: '1px solid #ccc',
-          padding: 10,
-          marginBottom: 10,
-          backgroundColor: '#f9f9f9',
-        }}
-      >
+    <div className="chat-wrapper">
+      <div className="chat-box">
         {messages.map((m, i) => (
-          <div key={i} style={{ marginBottom: 8, color: m.role === 'user' ? '#007bff' : '#333' }}>
+          <div key={i} className={`chat-message ${m.role === 'user' ? 'user' : 'bot'}`}>
             <b>{m.role === 'user' ? 'Moi' : 'Bot'}:</b> {m.content}
           </div>
         ))}
-        {loading && <div><i>Bot is typing...</i></div>}
+        {loading && <div className="chat-message bot"><i>Bot is typing...</i></div>}
       </div>
-      <input
-        type="text"
-        value={input}
-        onChange={e => setInput(e.target.value)}
-        onKeyDown={e => {
-          if (e.key === 'Enter') sendMessage();
-        }}
-        placeholder="Tapez votre message..."
-        style={{ width: '100%', padding: 8, fontSize: 16 }}
-        disabled={loading}
-      />
-      <button
-        onClick={sendMessage}
-        disabled={loading || !input.trim()}
-        style={{ marginTop: 8, padding: '8px 16px' }}
-      >
-        Envoyer
-      </button>
+      <div className="chat-input">
+        <input
+          type="text"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter') sendMessage();
+          }}
+          placeholder="Tapez votre message..."
+          disabled={loading}
+        />
+        <button onClick={sendMessage} disabled={loading || !input.trim()}>
+          Envoyer
+        </button>
+      </div>
     </div>
   );
 }

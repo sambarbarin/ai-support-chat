@@ -4,13 +4,7 @@ import os
 
 app = FastAPI()
 
-API_URL = "https://api.accor-gpt.accor.net/"
-API_KEY = os.getenv("ACCOR_API_KEY")  # charge de l'env ou par défaut
-
-headers = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
+OLLAMA_API_URL = "http://ollama:11434/api/chat"
 
 @app.post("/chat")
 async def chat_endpoint(request: Request):
@@ -22,17 +16,17 @@ async def chat_endpoint(request: Request):
             raise HTTPException(status_code=400, detail="Missing 'message' in request body")
 
         payload = {
-            "model": "gpt-4",  # ou autre si besoin, adapte selon ton API
-            "messages": [{"role": "user", "content": message}]
+            "model": "gemma:2b",
+            "messages": [{"role": "user", "content": message}],
+            "stream": False
         }
 
-        async with httpx.AsyncClient() as client:
-            response = await client.post(API_URL, json=payload, headers=headers)
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            response = await client.post(OLLAMA_API_URL, json=payload)
             response.raise_for_status()
             data = response.json()
-
-        # adapte selon la structure de ta réponse
-        reply = data.get("choices", [{}])[0].get("message", {}).get("content", "Pas de réponse")
+        
+        reply = data.get("message", {}).get("content", "Pas de réponse")
 
         return {"reply": reply}
 

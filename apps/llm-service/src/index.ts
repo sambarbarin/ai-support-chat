@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import axios from 'axios';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -9,51 +9,35 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const HF_API_URL = 'https://router.huggingface.co/hf-inference/models/HuggingFaceTB/SmolLM3-3B/v1/chat/completions';
-const HF_API_KEY = process.env.HUGGINGFACE_API_KEY;
+const OLLAMA_API_URL = 'http://ollama:11434/api/chat';
 
-app.post('/generate', async (req, res) => {
-  const { prompt } = req.body;
-
-  if (!HF_API_KEY) {
-    return res.status(500).json({ error: 'HUGGINGFACE_API_KEY non défini' });
-  }
+app.post('/generate', async (req: Request, res: Response) => {
+  const { messages } = req.body;
 
   try {
     const response = await axios.post(
-      HF_API_URL,
+      OLLAMA_API_URL,
       {
-        model: "HuggingFaceTB/SmolLM3-3B",
+        model: "tinyllama",
         stream: false,
-        messages: [
-          {
-            role: "user",
-            content: prompt
-          }
-        ]
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${HF_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
+        messages: messages
       }
     );
 
-    const reply = response.data?.choices?.[0]?.message?.content ?? "Aucune réponse.";
+    const reply = response.data?.message?.content ?? "Aucune réponse.";
     res.json({ reply });
 
   } catch (error: any) {
-    console.error('Erreur Hugging Face:', {
+    console.error('Erreur Ollama:', {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status
     });
 
-    res.status(500).json({ error: 'Erreur appel Hugging Face API' });
+    res.status(500).json({ error: 'Erreur appel Ollama API' });
   }
 });
 
 app.listen(8000, () => {
-  console.log('LLM Service running on port 8000 with HuggingFaceTB/SmolLM3-3B');
+  console.log('LLM Service running on port 8000 with Ollama');
 });
