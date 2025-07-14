@@ -18,7 +18,7 @@ app.post('/generate', async (req: Request, res: Response) => {
     const response = await axios.post(
       OLLAMA_API_URL,
       {
-        model: "tinyllama",
+        model: "mistral",
         stream: false,
         messages: messages
       }

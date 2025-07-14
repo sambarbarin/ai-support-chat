@@ -18,7 +18,7 @@ done
 echo "Ollama server is ready."
 
 # Pull the model
-ollama pull tinyllama
+ollama pull mistral
 
 # Wait for the background process to finish, which will keep the container running
 wait $PID
