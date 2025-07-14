@@ -1,0 +1,16 @@
+FROM ubuntu:22.04
+
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
+# Download and install Ollama using the official script
+RUN curl -fsSL https://ollama.com/install.sh | sh
+
+# Expose the Ollama port
+EXPOSE 11434
+
+# Set up the entrypoint
+COPY entrypoint-ollama.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
