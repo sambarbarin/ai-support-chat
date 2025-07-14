@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import '../assets/chat-message.css';
 
 interface ChatMessageProps {
-  sender: 'user' | 'bot';
+  sender: 'user' | 'assistant';
   text: string;
 }
 
@@ -11,7 +11,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ sender, text }) => {
   const isUser = sender === 'user';
 
   return (
-    <div className={`chat-message ${isUser ? 'user' : 'bot'}`}>
+    <div className={`chat-message ${isUser ? 'user' : 'assistant'}`}>
       {isUser ? (
         <p>{text}</p>
       ) : (
