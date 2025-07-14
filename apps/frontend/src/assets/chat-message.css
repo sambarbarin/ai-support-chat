@@ -1,21 +1,56 @@
+.model-info {
+  text-align: center;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.model-info h2 {
+  margin: 0;
+  font-size: 2rem;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.model-info p {
+  margin: 0.5rem 0 0;
+  font-size: 1.2rem;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
+}
+
+.custom-text-style {
+  fill: white;
+  transform: scale(4.5);
+}
+
 .chat-wrapper {
   display: flex;
   flex-direction: column;
-  height: 90vh;
-  max-width: 700px;
-  margin: auto;
+  height: 100vh;
+  max-width: 800px;
+  margin: 0 auto;
   padding: 1rem;
-  font-family: Arial, sans-serif;
   box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.model-info {
+  flex: 0.5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
 }
 
 .chat-box {
-  flex: 1;
+  flex: 4;
   overflow-y: auto;
   padding: 1rem;
-  background: #f9f9f9;
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-message {
@@ -29,14 +64,14 @@
 
 .chat-message.user {
   align-self: flex-end;
-  background-color: #007bff;
+  background-color: #4a90e2;
   color: white;
 }
 
 .chat-message.bot {
   align-self: flex-start;
-  background-color: #f1f1f1;
-  color: #333;
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
 }
 
 .markdown h1, .markdown h2, .markdown h3 {
@@ -57,7 +92,9 @@
   flex: 1;
   padding: 0.6rem;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
 }
 
 .chat-input button {
@@ -74,21 +111,46 @@
   background-color: #0056b3;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .chat-wrapper {
-    height: 100vh;
     padding: 0.5rem;
   }
 
-  .chat-message {
-    max-width: 90%;
+  .model-info {
+    flex: 1;
   }
 
-  .chat-input {
-    flex-direction: column;
+  .chat-box {
+    flex: 4;
   }
 
-  .chat-input button {
-    width: 100%;
+  .custom-text-style {
+    transform: scale(3);
   }
+}
+
+@media (max-width: 480px) {
+  .custom-text-style {
+    transform: scale(2);
+  }
+
+  .model-info p {
+    font-size: 1rem;
+  }
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  color: white;
+  font-size: 0.8rem;
+}
+
+footer a {
+  color: #aaa;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
 }

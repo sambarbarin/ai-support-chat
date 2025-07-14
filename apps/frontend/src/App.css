@@ -1,7 +1,8 @@
-#root, .app-container {
+body, #root, .app-container {
   height: 100vh;
   margin: 0;
   padding: 0;
+  color: white;
 }
 
 .logo {

@@ -1,6 +1,7 @@
 // frontend/src/components/Chat.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import '../assets/chat-message.css';
+import CurvedLoop from './CurvedLoop';
 
 type Message = {
   role: 'user' | 'assistant';
@@ -47,12 +48,22 @@ export default function Chat() {
     }
   }
 
-  return (
+  return (  
     <div className="chat-wrapper">
+      <div className="model-info">
+        <CurvedLoop 
+          marqueeText="  ✦  AI Support Chat  ✦  "
+          speed={1}
+          curveAmount={-10}
+          interactive={false}
+          className="custom-text-style"
+        />
+        <p>Powered by advanced AI models to assist you.</p>
+      </div>
       <div className="chat-box" ref={chatBoxRef}>
         {messages.map((m, i) => (
           <div key={i} className={`chat-message ${m.role === 'user' ? 'user' : 'bot'}`}>
-            <b>{m.role === 'user' ? 'Moi' : 'Bot'}:</b> {m.content}
+            <b>{m.role === 'user' ? 'User' : 'Bot'}:</b> {m.content}
           </div>
         ))}
         {loading && <div className="chat-message bot"><i>Bot is typing...</i></div>}
@@ -72,6 +83,12 @@ export default function Chat() {
           Envoyer
         </button>
       </div>
+      <footer>
+        <p>
+          <a href="https://github.com/sambarbarin/ai-support-chat" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        </p>
+        <p>Personal Information: [To be provided]</p>
+      </footer>
     </div>
   );
 }
