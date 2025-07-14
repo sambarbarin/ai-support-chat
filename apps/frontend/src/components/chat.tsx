@@ -1,5 +1,5 @@
 // frontend/src/components/Chat.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import '../assets/chat-message.css';
 
 type Message = {
@@ -11,6 +11,13 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const chatBoxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages, loading]);
 
   async function sendMessage() {
     if (!input.trim()) return;
@@ -42,7 +49,7 @@ export default function Chat() {
 
   return (
     <div className="chat-wrapper">
-      <div className="chat-box">
+      <div className="chat-box" ref={chatBoxRef}>
         {messages.map((m, i) => (
           <div key={i} className={`chat-message ${m.role === 'user' ? 'user' : 'bot'}`}>
             <b>{m.role === 'user' ? 'Moi' : 'Bot'}:</b> {m.content}
