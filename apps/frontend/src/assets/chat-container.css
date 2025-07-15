@@ -3,6 +3,21 @@
   height: 100%;
   width: 100%;
   position: relative;
+  color: #fff;
+  overflow: hidden;
+}
+
+.background-silk {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+}
+
+.chat-container.sidebar-open .chat-wrapper {
+  /* No margin change when sidebar is open */
 }
 
 .chat-wrapper {
@@ -10,11 +25,33 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
   position: relative;
+  z-index: 1;
+}
+
+.chat-box-container {
+  position: relative;
+  flex: 5;
+  overflow: visible;
+  border-radius: 12px;
+  margin: 0.5rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-box-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
 }
 
 .model-info {
@@ -24,16 +61,39 @@
 }
 
 .sidebar-toggle {
-  position: absolute;
-  left: 0;
-  top: 0;
-  background: none;
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  background: rgba(0, 0, 0, 0.3);
   border: none;
   color: white;
   font-size: 1.5rem;
   cursor: pointer;
   padding: 5px 10px;
-  z-index: 5;
+  z-index: 20;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.burger-icon {
+  margin-right: 5px;
+}
+
+.burger-text {
+  font-size: 0.9rem;
+  opacity: 1;
+  font-weight: bold;
+}
+
+.sidebar-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-toggle.active {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: rgb(255, 255, 255);
 }
 
 .empty-chat {
@@ -60,5 +120,9 @@
   .chat-wrapper {
     width: 100%;
     padding: 10px;
+  }
+  
+  .chat-container.sidebar-open .chat-wrapper {
+    margin-left: 0;
   }
 }

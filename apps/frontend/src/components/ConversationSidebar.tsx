@@ -66,6 +66,15 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   const handleDeleteConversation = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering the conversation selection
     
+    // Show confirmation dialog
+    const isConfirmed = window.confirm(
+      "Êtes vous sur de vouloir supprimer cette conversation ? Cette action est irréversible."
+    );
+    
+    if (!isConfirmed) {
+      return; // User cancelled the deletion
+    }
+    
     try {
       const response = await fetch(`${config.apiUrl}/conversations/${id}`, {
         method: 'DELETE',
