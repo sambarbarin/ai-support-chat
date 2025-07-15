@@ -918,6 +918,7 @@ fraction.js@^4.3.7:
   resolved "file:apps/frontend"
   dependencies:
     "@react-three/fiber" "^9.2.0"
+    ogl "^1.0.11"
     react "^19.1.0"
     react-dom "^19.1.0"
     react-markdown "^10.1.0"
