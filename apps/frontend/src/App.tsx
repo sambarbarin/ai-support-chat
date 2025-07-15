@@ -1,6 +1,8 @@
 import React from 'react';
 import Chat from './components/chat';
 import Silk from './components/Silk';
+import './assets/chat-container.css';
+import './assets/conversation-sidebar.css';
 
 function App() {
   return (

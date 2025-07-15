@@ -32,7 +32,37 @@ git clone https://github.com/sambarbarin/ai-support-chat.git
 cd ai-support-chat
 ```
 
-### 2. Launch the Application
+### 2. Configure Environment Variables
+
+The application uses environment variables for configuration. A template file is provided to help you set up your environment.
+
+1. Copy the example environment file to create your own:
+
+```bash
+cp .env.example .env
+```
+
+2. Edit the `.env` file to set your database credentials and other configuration options:
+
+```bash
+# Database Configuration
+POSTGRES_USER=your_postgres_user
+POSTGRES_PASSWORD=your_secure_password
+POSTGRES_DB=your_database_name
+DB_HOST=postgres
+DB_PORT=5432
+DB_NAME=your_database_name
+DB_USER=your_postgres_user
+DB_PASSWORD=your_secure_password
+```
+
+3. Copy the `.env` file to the `infra/docker` directory:
+
+```bash
+cp .env infra/docker/.env
+```
+
+### 4. Launch the Application
 
 The entire application stack is managed by Docker Compose. Make sure Docker Desktop is running, and then execute the following command from the `infra/docker` directory:
 
@@ -48,7 +78,7 @@ This command will:
 
 **Note:** You do not need to run `npm install` or `npm run build` on your local machine. These steps are automatically executed inside the Docker containers as part of the build process defined in the `Dockerfile` for each service.
 
-### 3. Access the Application
+### 5. Access the Application
 
 Once all the services are running, you can access the frontend of the application by opening your web browser and navigating to:
 
