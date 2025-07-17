@@ -1,5 +1,5 @@
-# API Gateway Dockerfile
-# This is a complete Dockerfile for the API Gateway service
+# Complete API Gateway Dockerfile Solution
+# This is a reference implementation for the API Gateway service
 
 # Stage 1: Build
 FROM node:18-alpine AS builder

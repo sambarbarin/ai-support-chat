@@ -1,5 +1,5 @@
-# Ollama Dockerfile
-# This is a complete Dockerfile for the Ollama service
+# Complete Dockerfile.ollama Solution
+# This is a reference implementation for the Ollama service
 
 FROM ubuntu:22.04
 

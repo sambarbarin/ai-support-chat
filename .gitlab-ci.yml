@@ -1,0 +1,57 @@
+# GitLab CI/CD Pipeline Configuration
+# This pipeline builds and deploys the AI Support Chat application
+
+stages:
+  - build
+  - deploy
+
+variables:
+  # Docker and Container Registry Configuration
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  
+  # TODO: Define your CI/CD variables here
+  # Examples:
+  # POSTGRES_USER: db_user
+  # POSTGRES_PASSWORD: ${DB_PASSWORD}  # Use GitLab CI/CD variables for secrets
+  # POSTGRES_DB: ai_support_db
+
+# Build stage: Build and push Docker images
+build_images:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    # TODO: Implement Docker build and push commands
+    # Example:
+    # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    # - docker build -t $CI_REGISTRY_IMAGE/api-gateway:$CI_COMMIT_SHA -f apps/api-gateway/Dockerfile ./apps/api-gateway
+    # - docker push $CI_REGISTRY_IMAGE/api-gateway:$CI_COMMIT_SHA
+    # - Repeat for other services (frontend, llm-service, ollama)
+    - echo "Building Docker images..."
+  cache:
+    # TODO: Configure cache for faster builds
+    # Example:
+    # paths:
+    #   - apps/*/node_modules
+    #   - apps/*/dist
+
+# Deploy stage: Deploy the application
+deploy_application:
+  stage: deploy
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    # TODO: Implement deployment commands
+    # Example:
+    # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    # - docker-compose -f infra/docker/docker-compose.yml pull
+    # - docker-compose -f infra/docker/docker-compose.yml up -d
+    - echo "Deploying application..."
+  environment:
+    name: production
+    url: https://example.com  # Replace with your actual URL
+  dependencies:
+    - build_images

@@ -1,3 +1,4 @@
+# Dockerfile for LLM Service
 FROM node:18
 
 WORKDIR /app
@@ -7,6 +8,7 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 8000
+# Expose the port the app runs on
+
 
 CMD ["npx", "ts-node", "src/index.ts"]

@@ -1,0 +1,120 @@
+# Complete GitLab CI/CD Pipeline Solution (Simplified)
+# This is a reference implementation for the AI Support Chat application
+
+stages:
+  - build
+  - deploy
+
+variables:
+  # Docker and Container Registry Configuration
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  
+  # Database Configuration
+  POSTGRES_USER: db_user
+  POSTGRES_PASSWORD: ${DB_PASSWORD}  # Set this in GitLab CI/CD variables
+  POSTGRES_DB: ai_support_db
+  
+  # Application Configuration
+  APP_VERSION: ${CI_COMMIT_SHA}
+  REGISTRY_URL: ${CI_REGISTRY}
+  REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}
+
+# Build and push all Docker images
+build_images:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    # Build and push API Gateway
+    - echo "Building API Gateway image..."
+    - docker build -t $REGISTRY_IMAGE/api-gateway:$APP_VERSION -f apps/api-gateway/Dockerfile ./apps/api-gateway
+    - docker tag $REGISTRY_IMAGE/api-gateway:$APP_VERSION $REGISTRY_IMAGE/api-gateway:latest
+    - docker push $REGISTRY_IMAGE/api-gateway:$APP_VERSION
+    - docker push $REGISTRY_IMAGE/api-gateway:latest
+    
+    # Build and push Frontend
+    - echo "Building Frontend image..."
+    - docker build -t $REGISTRY_IMAGE/frontend:$APP_VERSION -f apps/frontend/Dockerfile ./apps/frontend
+    - docker tag $REGISTRY_IMAGE/frontend:$APP_VERSION $REGISTRY_IMAGE/frontend:latest
+    - docker push $REGISTRY_IMAGE/frontend:$APP_VERSION
+    - docker push $REGISTRY_IMAGE/frontend:latest
+    
+    # Build and push LLM Service
+    - echo "Building LLM Service image..."
+    - docker build -t $REGISTRY_IMAGE/llm-service:$APP_VERSION -f apps/llm-service/Dockerfile ./apps/llm-service
+    - docker tag $REGISTRY_IMAGE/llm-service:$APP_VERSION $REGISTRY_IMAGE/llm-service:latest
+    - docker push $REGISTRY_IMAGE/llm-service:$APP_VERSION
+    - docker push $REGISTRY_IMAGE/llm-service:latest
+    
+    # Build and push Ollama
+    - echo "Building Ollama image..."
+    - docker build -t $REGISTRY_IMAGE/ollama:$APP_VERSION -f infra/docker/Dockerfile.ollama ./infra/docker
+    - docker tag $REGISTRY_IMAGE/ollama:$APP_VERSION $REGISTRY_IMAGE/ollama:latest
+    - docker push $REGISTRY_IMAGE/ollama:$APP_VERSION
+    - docker push $REGISTRY_IMAGE/ollama:latest
+    
+    # Save build info for later stages
+    - echo "APP_VERSION=$APP_VERSION" > build-info.txt
+  cache:
+    paths:
+      - apps/*/node_modules
+      - apps/*/dist
+  artifacts:
+    paths:
+      - build-info.txt
+    expire_in: 1 day
+
+# Deploy the application
+deploy_application:
+  stage: deploy
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - source build-info.txt
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    # Create docker-compose file
+    - cp infra/docker/docker-compose.yml docker-compose.deploy.yml
+    
+    # Update image references to use the built images
+    - sed -i "s|build:|image: $REGISTRY_IMAGE/api-gateway:$APP_VERSION|g" docker-compose.deploy.yml
+    - sed -i "s|build:|image: $REGISTRY_IMAGE/frontend:$APP_VERSION|g" docker-compose.deploy.yml
+    - sed -i "s|build:|image: $REGISTRY_IMAGE/llm-service:$APP_VERSION|g" docker-compose.deploy.yml
+    - sed -i "s|build:|image: $REGISTRY_IMAGE/ollama:$APP_VERSION|g" docker-compose.deploy.yml
+    
+    # Create environment file
+    - echo "POSTGRES_USER=$POSTGRES_USER" > .env.deploy
+    - echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> .env.deploy
+    - echo "POSTGRES_DB=$POSTGRES_DB" >> .env.deploy
+    - echo "DB_HOST=postgres" >> .env.deploy
+    - echo "DB_PORT=5432" >> .env.deploy
+    - echo "DB_NAME=$POSTGRES_DB" >> .env.deploy
+    - echo "DB_USER=$POSTGRES_USER" >> .env.deploy
+    - echo "DB_PASSWORD=$POSTGRES_PASSWORD" >> .env.deploy
+    
+    # Transfer files to server
+    - scp docker-compose.deploy.yml $SSH_USER@$SSH_HOST:/opt/ai-support-chat/docker-compose.yml
+    - scp .env.deploy $SSH_USER@$SSH_HOST:/opt/ai-support-chat/.env
+    
+    # Deploy to server
+    - ssh $SSH_USER@$SSH_HOST "cd /opt/ai-support-chat && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && docker-compose pull && docker-compose up -d"
+    
+    # Verify deployment
+    - ssh $SSH_USER@$SSH_HOST "cd /opt/ai-support-chat && docker-compose ps"
+  environment:
+    name: production
+    url: https://$DOMAIN  # Set DOMAIN in GitLab CI/CD variables
+  dependencies:
+    - build_images

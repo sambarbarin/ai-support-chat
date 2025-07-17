@@ -1,5 +1,5 @@
-# Frontend Dockerfile
-# This is a complete Dockerfile for the Frontend service
+# Complete Frontend Dockerfile Solution
+# This is a reference implementation for the Frontend service
 
 # Stage 1: Build
 FROM node:18 AS builder
